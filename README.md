@@ -28,5 +28,5 @@ For Cormac, from command prompt or GitBash:
 4. If you were able to merge in the previous step, select merge pull request. If you were unable to merge, either @ Demola in Slack or try to resolve it. 
 
 ## Getting Most Up to Date Code (Pulling)
-1. `git pull origin master`
+1. `git pull origin main`
     - If you're running the code for the first time in a while or need changes, I would strongly recommend doing git pull first before working. You'll also have to restart your notebook for your changes to be in full effect.
