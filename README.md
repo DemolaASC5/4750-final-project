@@ -21,7 +21,7 @@ For Cormac, from command prompt or GitBash:
     - If prompted to enter your credentials, your username is your GitHub username 
     - For password, you need to generate a <a href = "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token"> personal access token </a> (if you don't already have one). Once creating one, safe the access token where you can easily access it, since you'll need it to push any future changes. 
 
-## Merging Changes from your branch to main repo
+## Merging Changes from your branch to `main` branch
 1. There should be a notification in GitHub indicating that you recently pushed, but if not navigate to your branch in the repository. 
 2. Select compare & pull request or contribute --> Open pull request 
 3. You should be able to merge, but if you aren't still create a pull request. 
