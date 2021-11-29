@@ -1,8 +1,15 @@
 ### A Pluto.jl notebook ###
-# v0.17.0
+# v0.16.1
 
 using Markdown
 using InteractiveUtils
+
+# ╔═╡ 41c5c9e1-179a-4d9f-8f10-deeb9770c102
+begin
+	using Pkg
+	Pkg.add("XLSX")
+	Pkg.add("Statistics")
+end
 
 # ╔═╡ 06f79570-4636-11ec-1ab2-f36e6b5586f3
 students = [(name = "Anna Cliche", cornell_id = "amc527"),
@@ -11,10 +18,87 @@ students = [(name = "Anna Cliche", cornell_id = "amc527"),
 		   ]
 
 
-# ╔═╡ 7c00440f-18fb-45c8-ad6f-6db855afbea2
-# test
-# test2
-# test 3
+# ╔═╡ d6ccc27a-be8c-43e7-adc1-7f222944d169
+begin
+	import XLSX
+	import Statistics
+end
+
+# ╔═╡ e404eb93-06d1-47a0-9c0e-bf8a778b53ed
+# Defining Global Variables
+begin 
+	xf = XLSX.readdata("Tidy/HVI_Ranking_Cleaned.xlsx", "HVI!A1:D176")
+    geoid = xf[:,1][2:176]
+	temp = xf[:,2][2:176]
+	z_score = xf[:,3][2:176]
+	std = Statistics.mean(xf[:,4][2:176])
+	average = 87
+	extreme = 96 
+	average_temp = []
+	extreme_temp = []
+	q1 = [] 
+	q2 = []
+	q3 = []
+	q4 = []
+end 
+
+# ╔═╡ 714f98f2-a42b-458d-99cd-28af107ca3c2
+# Helper Function Converting Fahrenheit to Celsius
+function get_celsius(farenheit)
+	return 5*(farenheit-32)*(1/9)
+end 
+
+# ╔═╡ a4a11d6a-c7c3-4026-94d4-66f56f63475f
+# Recalculating Means with New Temperatures 
+begin
+	i = 1 
+	while i < length(temp)
+		push!(average_temp, get_celsius(z_score[i]*std+average))
+		push!(extreme_temp, get_celsius(z_score[i]*std+extreme))
+		i+=1
+	end 
+end 
+
+# ╔═╡ 03d5dd5b-5992-4dc9-98c0-af18129482c3
+# Adding Ranges to Quartiles
+begin 
+	separator = (maximum(average_temp) - minimum(average_temp))/4
+	index = 1
+	while index < length(temp)
+		if average_temp[index] > get_celsius(average) - 2*separator && average_temp[index] <= get_celsius(average) - separator
+			push!(q1, [geoid[index], average_temp[index], extreme_temp[index]]) 
+		elseif average_temp[index] > get_celsius(average) - separator && average_temp[index] <= get_celsius(average)
+			push!(q2, [geoid[index], average_temp[index], extreme_temp[index]])
+		elseif average_temp[index] > get_celsius(average) && average_temp[index] <= get_celsius(average) + separator
+			push!(q3, [geoid[index], average_temp[index], extreme_temp[index]]) 
+		else 
+			push!(q4, [geoid[index], average_temp[index], extreme_temp[index]])
+		end 
+		index += 1
+	end 
+end 
+
+# ╔═╡ 456f63c4-4d4b-4679-9c42-228787c29d9c
+length(q1)
+
+# ╔═╡ f31ec0b3-7a90-42e0-9969-f1bb6048e77c
+length(q2)
+
+# ╔═╡ 586b6484-2062-471c-9bc4-f5e017ced3c1
+length(q3)
+
+# ╔═╡ 60a19d85-c9e4-4f17-b12d-6c83ff29d0bf
+length(q4)
 
 # ╔═╡ Cell order:
 # ╠═06f79570-4636-11ec-1ab2-f36e6b5586f3
+# ╠═41c5c9e1-179a-4d9f-8f10-deeb9770c102
+# ╠═d6ccc27a-be8c-43e7-adc1-7f222944d169
+# ╠═e404eb93-06d1-47a0-9c0e-bf8a778b53ed
+# ╠═714f98f2-a42b-458d-99cd-28af107ca3c2
+# ╠═a4a11d6a-c7c3-4026-94d4-66f56f63475f
+# ╠═03d5dd5b-5992-4dc9-98c0-af18129482c3
+# ╠═456f63c4-4d4b-4679-9c42-228787c29d9c
+# ╠═f31ec0b3-7a90-42e0-9969-f1bb6048e77c
+# ╠═586b6484-2062-471c-9bc4-f5e017ced3c1
+# ╠═60a19d85-c9e4-4f17-b12d-6c83ff29d0bf
