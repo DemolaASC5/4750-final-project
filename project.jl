@@ -18,6 +18,11 @@ students = [(name = "Anna Cliche", cornell_id = "amc527"),
 		   ]
 
 
+# ╔═╡ 3973de8c-9247-472a-82e1-ae04aa2a7a2e
+# test
+# test2
+# test 3
+
 # ╔═╡ 4563cda0-f28a-48a0-8bae-a958ae9d5bc2
 begin
 	import XLSX
@@ -92,6 +97,7 @@ length(q4)
 
 # ╔═╡ Cell order:
 # ╠═06f79570-4636-11ec-1ab2-f36e6b5586f3
+# ╠═3973de8c-9247-472a-82e1-ae04aa2a7a2e
 # ╠═7c00440f-18fb-45c8-ad6f-6db855afbea2
 # ╠═4563cda0-f28a-48a0-8bae-a958ae9d5bc2
 # ╠═61353d15-eb27-47e2-a1ec-64144586eda4
