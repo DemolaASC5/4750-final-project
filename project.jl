@@ -12,4 +12,4 @@ students = [(name = "Anna Cliche", cornell_id = "amc527"),
 
 
 # ╔═╡ Cell order:
-# ╟─06f79570-4636-11ec-1ab2-f36e6b5586f3
+# ╠═06f79570-4636-11ec-1ab2-f36e6b5586f3
