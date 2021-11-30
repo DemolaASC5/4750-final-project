@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.16.1
+# v0.17.0
 
 using Markdown
 using InteractiveUtils
@@ -90,6 +90,40 @@ length(q3)
 # ╔═╡ 60a19d85-c9e4-4f17-b12d-6c83ff29d0bf
 length(q4)
 
+# ╔═╡ ee0dee84-a004-4d92-961d-af819f1393a8
+md"""
+
+#### Decision Variables
+- ``X_{ij}`` represents the area of section i that is renovated to method j (in mi)
+
+#### Objective: Minimize Cost
+minimizing the cost (installation + maintenace)
+
+#### Constraints:
+###### Nonnegativity
+Because we cannot have negative waste flows, all of the waste and residual streams must be greater or equal to zero. For the relevant i,j,k values:
+```math
+X_{ij} \geq 0
+``` 
+"""
+
+# ╔═╡ d84e1d84-2ed0-4e49-9034-294908a64d6d
+begin
+	totalArea = 1700582400; #ft^2
+	timeHorizon = 50; #years
+
+	#in the following order of each treatment method
+		# 	 A 	  B 	C 	  D 	E 	  F 	
+	deltaT = [0 -6.67 -5.71 -4.00 -5.60 -10.0];
+	installCost = [0 12.50 1.50 0.60 1.736 3.50];
+	maintCost = [0 0.31 0.20 0.12 0.0067 0.50];
+	methodWeights = [0 .40 .125 .075 .20 .20];
+
+
+	#Model Inputs: temperature, given above as average and extreme
+	
+end
+
 # ╔═╡ Cell order:
 # ╠═06f79570-4636-11ec-1ab2-f36e6b5586f3
 # ╠═41c5c9e1-179a-4d9f-8f10-deeb9770c102
@@ -102,3 +136,5 @@ length(q4)
 # ╠═f31ec0b3-7a90-42e0-9969-f1bb6048e77c
 # ╠═586b6484-2062-471c-9bc4-f5e017ced3c1
 # ╠═60a19d85-c9e4-4f17-b12d-6c83ff29d0bf
+# ╟─ee0dee84-a004-4d92-961d-af819f1393a8
+# ╠═d84e1d84-2ed0-4e49-9034-294908a64d6d
