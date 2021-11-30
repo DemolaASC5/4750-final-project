@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.0
+# v0.16.1
 
 using Markdown
 using InteractiveUtils
@@ -27,9 +27,10 @@ end
 # ╔═╡ e404eb93-06d1-47a0-9c0e-bf8a778b53ed
 # Defining Global Variables
 begin 
-	xf = XLSX.readdata("Tidy/HVI_Ranking_Cleaned.xlsx", "HVI!A1:D176")
+	xf = XLSX.readdata("Tidy/HVI_Ranking_Cleaned.xlsx", "HVI!A1:AB176")
     geoid = xf[:,1][2:176]
 	temp = xf[:,2][2:176]
+	hvi = xf[:,27][2:176]
 	z_score = xf[:,3][2:176]
 	std = Statistics.mean(xf[:,4][2:176])
 	average = 87
@@ -65,11 +66,11 @@ begin
 	separator = (maximum(average_temp) - minimum(average_temp))/4
 	index = 1
 	while index < length(temp)
-		if average_temp[index] > get_celsius(average) - 2*separator && average_temp[index] <= get_celsius(average) - separator
+		if hvi[index] > 0.7 && hvi[index] <= 1 
 			push!(q1, [geoid[index], average_temp[index], extreme_temp[index]]) 
-		elseif average_temp[index] > get_celsius(average) - separator && average_temp[index] <= get_celsius(average)
+		elseif hvi[index] > 0.5 && hvi[index] <= 0.7 
 			push!(q2, [geoid[index], average_temp[index], extreme_temp[index]])
-		elseif average_temp[index] > get_celsius(average) && average_temp[index] <= get_celsius(average) + separator
+		elseif hvi[index] > 0.3 && hvi[index] <= 0.5 
 			push!(q3, [geoid[index], average_temp[index], extreme_temp[index]]) 
 		else 
 			push!(q4, [geoid[index], average_temp[index], extreme_temp[index]])
