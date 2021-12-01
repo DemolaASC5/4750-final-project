@@ -111,7 +111,7 @@ X_{ij} \geq 0
 """
 
 # ╔═╡ bab59ba1-0506-4ec8-a87f-4f55d49062f5
-temperature = 30.55; #C
+oldTemp = 30.55; #Celsius
 
 # ╔═╡ d84e1d84-2ed0-4e49-9034-294908a64d6d
 begin
@@ -196,14 +196,36 @@ newtemp = sum(quadrantArea*quadTempChange) / totalArea
 
 = (quadrantArea[1]*quadTempChange[1] +quadrantArea[2]*quadTempChange[2] +quadrantArea[3]*quadTempChange[3]+quadrantArea[3]*quadTempChange[3]) / totalArea
 
-each quadrant's quadTempChange = temperature*tempVar + tempChanges
+each quadrant's quadTempChange = oldtemp*tempVar + tempChanges
 
 each Xij's tempChanges = Xij*deltaT(j)/availableArea(ij)
 
 """
 
+# ╔═╡ 819162a4-90a7-4781-b1b0-fd6b0e962f59
+minTempChange = 0.5;
+
+# ╔═╡ 24e335d3-decb-4f85-b70a-36e2b1fee467
+begin
+quadTempChange1 = oldTemp*tempVar[1] + 
+X[1,1]*deltaT[1]/availableArea[1,1] + X[1,2]*deltaT[2]/availableArea[1,2] + 	X[1,3]*deltaT[3]/availableArea[1,3] + X[1,4]*deltaT[4]/availableArea[1,4] + X[1,5]*deltaT[5]/availableArea[1,5] + X[1,6]*deltaT[6]/availableArea[1,6];
+
+quadTempChange2 = oldTemp*tempVar[2] + 
+X[2,1]*deltaT[1]/availableArea[2,1] + X[2,2]*deltaT[2]/availableArea[2,2] + 	X[2,3]*deltaT[3]/availableArea[2,3] + X[2,4]*deltaT[4]/availableArea[2,4] + X[2,5]*deltaT[5]/availableArea[2,5] + X[2,6]*deltaT[6]/availableArea[2,6];
+
+quadTempChange3 = oldTemp*tempVar[3] + 
+X[3,1]*deltaT[1]/availableArea[3,1] + X[3,2]*deltaT[2]/availableArea[3,2] + 	X[3,3]*deltaT[3]/availableArea[3,3] + X[3,4]*deltaT[4]/availableArea[3,4] + X[3,5]*deltaT[5]/availableArea[3,5] + X[3,6]*deltaT[6]/availableArea[3,6];
+
+quadTempChange4 = oldTemp*tempVar[4] + 
+X[4,1]*deltaT[1]/availableArea[4,1] + X[4,2]*deltaT[2]/availableArea[4,2] + 	X[4,3]*deltaT[3]/availableArea[4,3] + X[4,4]*deltaT[4]/availableArea[4,4] + X[4,5]*deltaT[5]/availableArea[4,5] + X[4,6]*deltaT[6]/availableArea[4,6];
+end
+
+# ╔═╡ 66d0186f-5b39-404f-adbe-116191db4236
+temperatureChange = oldTemp - 1/totalArea*(quadrantArea[1]*quadTempChange1 +quadrantArea[2]*quadTempChange2 +quadrantArea[3]*quadTempChange3 +quadrantArea[3]*quadTempChange4);
+
 # ╔═╡ d6bee536-f55d-45e0-b4fc-4c3d81fc8785
 # working on expression for the overall temperature change
+@constraint(UHImodel, ResultingTemperatureChange, temperatureChange >= minTempChange )
 
 # ╔═╡ 5e6bc7d0-cc71-44f4-912e-7a8a9146c58e
 # constraint for Xij cannot be bigger than the available space
@@ -233,5 +255,8 @@ each Xij's tempChanges = Xij*deltaT(j)/availableArea(ij)
 # ╠═20da94e4-3a47-4ea7-ada4-1b0697526285
 # ╠═991efd91-b696-478c-a9d5-eb7a39237129
 # ╠═19a1a43e-0ab8-4360-8978-3f1820cd55fb
+# ╠═819162a4-90a7-4781-b1b0-fd6b0e962f59
+# ╠═24e335d3-decb-4f85-b70a-36e2b1fee467
+# ╠═66d0186f-5b39-404f-adbe-116191db4236
 # ╠═d6bee536-f55d-45e0-b4fc-4c3d81fc8785
 # ╠═5e6bc7d0-cc71-44f4-912e-7a8a9146c58e
