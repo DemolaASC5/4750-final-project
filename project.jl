@@ -118,7 +118,7 @@ begin
 
 	#quartiles:  1 	2 	3 	4
 	HVIweights = [0.1 0.2 0.3 0.4];
-	percentArea = [0.074285714 0.325714286 0.514285714 0.085714286];
+	percentArea = [.20 .23 .27 .30];
 	tempVar = [-1.265741024 -0.436508545 0.308562915 0.904330533];
 	
 	# the following given the percent of the each quartiles area that is un/available for each treatment method:
@@ -168,7 +168,7 @@ availableArea
 UHImodel = Model(Clp.Optimizer)
 
 # ╔═╡ 20da94e4-3a47-4ea7-ada4-1b0697526285
-@variable(UHImodel, 0 <= X[i=1:4, j=1:6] <= 1) #Decision Variables
+@variable(UHImodel, 0 <= X[i=1:4, j=1:6]) #Decision Variables
 
 # ╔═╡ 991efd91-b696-478c-a9d5-eb7a39237129
 @objective(UHImodel, Min, begin 						#total cost function
@@ -205,7 +205,36 @@ temperatureChange = oldTemp - 1/totalArea*(quadrantArea[1]*quadTempChange1 +quad
 
 # ╔═╡ 5e6bc7d0-cc71-44f4-912e-7a8a9146c58e
 # constraint for Xij cannot be bigger than the available space
+@constraints(UHImodel, begin
+	X[1,1] <= availableArea[1,1] 
+	X[1,2] <= availableArea[1,2]
+	X[1,3] <= availableArea[1,3] 
+	X[1,4] <= availableArea[1,4]
+	X[1,5] <= availableArea[1,5]
+	X[1,6] <= availableArea[1,6]
 
+	X[2,1] <= availableArea[2,1]
+	X[2,2] <= availableArea[2,2]
+	X[2,3] <= availableArea[2,3] 
+	X[2,4] <= availableArea[2,4]
+	X[2,5] <= availableArea[2,5]
+	X[2,6] <= availableArea[2,6]
+
+	X[3,1] <= availableArea[3,1]
+	X[3,2] <= availableArea[3,2]
+	X[3,3] <= availableArea[3,3]
+	X[3,4] <= availableArea[3,4]
+	X[3,5] <= availableArea[3,5]
+	X[3,6] <= availableArea[3,6]
+
+	X[4,1] <= availableArea[4,1]
+	X[4,2] <= availableArea[4,2]
+	X[4,3] <= availableArea[4,3]
+	X[4,4] <= availableArea[4,4]
+	X[4,5] <= availableArea[4,5]
+	X[4,6] <= availableArea[4,6]
+
+end)
 # need to somehow include the social benefits/weights
 
 # ╔═╡ Cell order:
