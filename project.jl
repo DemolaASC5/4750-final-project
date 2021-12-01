@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.16.1
+# v0.17.0
 
 using Markdown
 using InteractiveUtils
@@ -27,10 +27,9 @@ end
 # ╔═╡ e404eb93-06d1-47a0-9c0e-bf8a778b53ed
 # Defining Global Variables
 begin 
-	xf = XLSX.readdata("Tidy/HVI_Ranking_Cleaned.xlsx", "HVI!A1:AB176")
+	xf = XLSX.readdata("Tidy/HVI_Ranking_Cleaned.xlsx", "HVI!A1:D176")
     geoid = xf[:,1][2:176]
 	temp = xf[:,2][2:176]
-	hvi = xf[:,27][2:176]
 	z_score = xf[:,3][2:176]
 	std = Statistics.mean(xf[:,4][2:176])
 	average = 87
@@ -66,11 +65,11 @@ begin
 	separator = (maximum(average_temp) - minimum(average_temp))/4
 	index = 1
 	while index < length(temp)
-		if hvi[index] > 0.7 && hvi[index] <= 1 
+		if average_temp[index] > get_celsius(average) - 2*separator && average_temp[index] <= get_celsius(average) - separator
 			push!(q1, [geoid[index], average_temp[index], extreme_temp[index]]) 
-		elseif hvi[index] > 0.5 && hvi[index] <= 0.7 
+		elseif average_temp[index] > get_celsius(average) - separator && average_temp[index] <= get_celsius(average)
 			push!(q2, [geoid[index], average_temp[index], extreme_temp[index]])
-		elseif hvi[index] > 0.3 && hvi[index] <= 0.5 
+		elseif average_temp[index] > get_celsius(average) && average_temp[index] <= get_celsius(average) + separator
 			push!(q3, [geoid[index], average_temp[index], extreme_temp[index]]) 
 		else 
 			push!(q4, [geoid[index], average_temp[index], extreme_temp[index]])
@@ -113,7 +112,18 @@ begin
 	totalArea = 1700582400; #ft^2
 	timeHorizon = 50; #years
 
-	#in the following order of each treatment method
+	#quartiles:  1 	2 	3 	4
+	HVIweights = [0.1 0.2 0.3 0.4];
+	percentArea = [0.074285714 0.325714286 0.514285714 0.085714286];
+	tempVar = [-1.265741024 -0.436508545 0.308562915 0.904330533];
+	# the following given the percent of the each quartiles area that is un/available for each treatment method:
+	perRoof = [.16 .17 .17 .20];
+	perPark = [.04 .08 .08 .10];
+	perStreet = [.10 .20 .20 .25];
+	perSidewalk = [.10 .20 .20 .25];
+	perUnavailable = [.60 .30 .30 .20];
+
+	#treatment methods:
 		# 	 A 	  B 	C 	  D 	E 	  F 	
 	deltaT = [0 -6.67 -5.71 -4.00 -5.60 -10.0];
 	installCost = [0 12.50 1.50 0.60 1.736 3.50];
