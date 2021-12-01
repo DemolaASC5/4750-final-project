@@ -183,16 +183,16 @@ minTempChange = 0.5;
 
 # ╔═╡ 24e335d3-decb-4f85-b70a-36e2b1fee467
 begin
-quadTempChange1 = oldTemp*tempVar[1] + 
+quadTempChange1 = tempVar[1] + 
 X[1,1]*deltaT[1]/availableArea[1,1] + X[1,2]*deltaT[2]/availableArea[1,2] + 	X[1,3]*deltaT[3]/availableArea[1,3] + X[1,4]*deltaT[4]/availableArea[1,4] + X[1,5]*deltaT[5]/availableArea[1,5] + X[1,6]*deltaT[6]/availableArea[1,6];
 
-quadTempChange2 = oldTemp*tempVar[2] + 
+quadTempChange2 = tempVar[2] + 
 X[2,1]*deltaT[1]/availableArea[2,1] + X[2,2]*deltaT[2]/availableArea[2,2] + 	X[2,3]*deltaT[3]/availableArea[2,3] + X[2,4]*deltaT[4]/availableArea[2,4] + X[2,5]*deltaT[5]/availableArea[2,5] + X[2,6]*deltaT[6]/availableArea[2,6];
 
-quadTempChange3 = oldTemp*tempVar[3] + 
+quadTempChange3 = tempVar[3] + 
 X[3,1]*deltaT[1]/availableArea[3,1] + X[3,2]*deltaT[2]/availableArea[3,2] + 	X[3,3]*deltaT[3]/availableArea[3,3] + X[3,4]*deltaT[4]/availableArea[3,4] + X[3,5]*deltaT[5]/availableArea[3,5] + X[3,6]*deltaT[6]/availableArea[3,6];
 
-quadTempChange4 = oldTemp*tempVar[4] + 
+quadTempChange4 = tempVar[4] + 
 X[4,1]*deltaT[1]/availableArea[4,1] + X[4,2]*deltaT[2]/availableArea[4,2] + 	X[4,3]*deltaT[3]/availableArea[4,3] + X[4,4]*deltaT[4]/availableArea[4,4] + X[4,5]*deltaT[5]/availableArea[4,5] + X[4,6]*deltaT[6]/availableArea[4,6];
 end
 
@@ -237,6 +237,22 @@ temperatureChange = oldTemp - 1/totalArea*(quadrantArea[1]*quadTempChange1 +quad
 end)
 # need to somehow include the social benefits/weights
 
+# ╔═╡ 152e438d-c7c6-4e02-91d3-c21ae78d264f
+latex_formulation(UHImodel)
+
+# ╔═╡ 7751958e-9072-42d3-a0c8-b7cdedae617b
+optimize!(UHImodel)
+
+# ╔═╡ b1ce85d8-9518-48e6-851d-8ac84f25c6ed
+objective_value(UHImodel)
+
+# ╔═╡ b7688b63-963a-4094-913a-2de1df374b09
+value.(X) 
+
+# ╔═╡ a9086a0a-2226-4a20-8154-bfd19f9f2a67
+value.(temperatureChange)
+
+
 # ╔═╡ Cell order:
 # ╠═06f79570-4636-11ec-1ab2-f36e6b5586f3
 # ╠═41c5c9e1-179a-4d9f-8f10-deeb9770c102
@@ -264,3 +280,8 @@ end)
 # ╠═66d0186f-5b39-404f-adbe-116191db4236
 # ╠═d6bee536-f55d-45e0-b4fc-4c3d81fc8785
 # ╠═5e6bc7d0-cc71-44f4-912e-7a8a9146c58e
+# ╠═152e438d-c7c6-4e02-91d3-c21ae78d264f
+# ╠═7751958e-9072-42d3-a0c8-b7cdedae617b
+# ╠═b1ce85d8-9518-48e6-851d-8ac84f25c6ed
+# ╠═b7688b63-963a-4094-913a-2de1df374b09
+# ╠═a9086a0a-2226-4a20-8154-bfd19f9f2a67
