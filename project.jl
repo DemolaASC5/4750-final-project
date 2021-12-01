@@ -17,9 +17,7 @@ using JuMP, Clp
 # ╔═╡ 06f79570-4636-11ec-1ab2-f36e6b5586f3
 students = [(name = "Anna Cliche", cornell_id = "amc527"),
 			(name = "Cormac Mahoney", cornell_id = "cam495"),
-			(name = "Demola Ogunnaike", cornell_id = "dko22")
-		   ]
-
+			(name = "Demola Ogunnaike", cornell_id = "dko22")]
 
 # ╔═╡ d6ccc27a-be8c-43e7-adc1-7f222944d169
 begin
@@ -150,22 +148,14 @@ totalCost
 begin
 	quadrantArea = totalArea*percentArea;
 	availableArea = zeros(4,6)
-	for i=1:4
-		availableArea[i,1]=quadrantArea[i]*perUnavailable[i];
-	end
+	for i=1:4  availableArea[i,1]=quadrantArea[i]*perUnavailable[i]; end
 	for i=1:4
 		availableArea[i,2]=quadrantArea[i]*perRoof[i];
 		availableArea[i,3]=quadrantArea[i]*perRoof[i];
 	end
-	for i=1:4
-		availableArea[i,4]=quadrantArea[i]*perStreet[i];
-	end	
-	for i=1:4
-		availableArea[i,5]=quadrantArea[i]*perSidewalk[i];
-	end	
-	for i=1:4
-		availableArea[i,6]=quadrantArea[i]*perPark[i];
-	end
+	for i=1:4 availableArea[i,4]=quadrantArea[i]*perStreet[i]; end	
+	for i=1:4 availableArea[i,5]=quadrantArea[i]*perSidewalk[i]; end	
+	for i=1:4 availableArea[i,6]=quadrantArea[i]*perPark[i]; end
 end
 
 # ╔═╡ 867d63a8-39da-41e7-90fb-56efbe530a3b
@@ -178,7 +168,7 @@ availableArea
 UHImodel = Model(Clp.Optimizer)
 
 # ╔═╡ 20da94e4-3a47-4ea7-ada4-1b0697526285
-@variable(UHImodel, 0 <= X[i=1:4, j=1:6] <= 1)
+@variable(UHImodel, 0 <= X[i=1:4, j=1:6] <= 1) #Decision Variables
 
 # ╔═╡ 991efd91-b696-478c-a9d5-eb7a39237129
 @objective(UHImodel, Min, begin 						#total cost function
@@ -187,20 +177,6 @@ UHImodel = Model(Clp.Optimizer)
 	(X[1,3]+X[2,3]+X[3,3]+X[4,3])*(totalCost[3]) +
 	(X[1,4]+X[2,4]+X[3,4]+X[4,4])*(totalCost[4])
 end)
-
-# ╔═╡ 19a1a43e-0ab8-4360-8978-3f1820cd55fb
-md"""
-temperature change = oldtemp - newtemp
-
-newtemp = sum(quadrantArea*quadTempChange) / totalArea
-
-= (quadrantArea[1]*quadTempChange[1] +quadrantArea[2]*quadTempChange[2] +quadrantArea[3]*quadTempChange[3]+quadrantArea[3]*quadTempChange[3]) / totalArea
-
-each quadrant's quadTempChange = oldtemp*tempVar + tempChanges
-
-each Xij's tempChanges = Xij*deltaT(j)/availableArea(ij)
-
-"""
 
 # ╔═╡ 819162a4-90a7-4781-b1b0-fd6b0e962f59
 minTempChange = 0.5;
@@ -254,7 +230,6 @@ temperatureChange = oldTemp - 1/totalArea*(quadrantArea[1]*quadTempChange1 +quad
 # ╠═0c0522ba-5ab5-4573-a4ba-ffe31210e91f
 # ╠═20da94e4-3a47-4ea7-ada4-1b0697526285
 # ╠═991efd91-b696-478c-a9d5-eb7a39237129
-# ╠═19a1a43e-0ab8-4360-8978-3f1820cd55fb
 # ╠═819162a4-90a7-4781-b1b0-fd6b0e962f59
 # ╠═24e335d3-decb-4f85-b70a-36e2b1fee467
 # ╠═66d0186f-5b39-404f-adbe-116191db4236
