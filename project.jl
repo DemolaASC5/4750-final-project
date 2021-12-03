@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.0
+# v0.16.1
 
 using Markdown
 using InteractiveUtils
@@ -172,10 +172,12 @@ UHImodel = Model(Clp.Optimizer)
 
 # ╔═╡ 991efd91-b696-478c-a9d5-eb7a39237129
 @objective(UHImodel, Min, begin 						#total cost function
-	(X[1,1]+X[2,1]+X[3,1]+X[4,1])*(totalCost[1]) +
-	(X[1,2]+X[2,2]+X[3,2]+X[4,2])*(totalCost[2]) +
-	(X[1,3]+X[2,3]+X[3,3]+X[4,3])*(totalCost[3]) +
-	(X[1,4]+X[2,4]+X[3,4]+X[4,4])*(totalCost[4])
+	(X[1,1]+X[2,1]+X[3,1]+X[4,1])*(totalCost[1]) + 
+	(X[1,2]+X[2,2]+X[3,2]+X[4,2])*(totalCost[2]) + 
+	(X[1,3]+X[2,3]+X[3,3]+X[4,3])*(totalCost[3]) + 
+	(X[1,4]+X[2,4]+X[3,4]+X[4,4])*(totalCost[4]) + 
+	(X[1,5]+X[2,5]+X[3,5]+X[4,5])*(totalCost[5]) + 
+	(X[1,6]+X[2,6]+X[3,6]+X[4,6])*(totalCost[6]) 
 end)
 
 # ╔═╡ 819162a4-90a7-4781-b1b0-fd6b0e962f59
@@ -183,21 +185,25 @@ minTempChange = 0.5;
 
 # ╔═╡ 24e335d3-decb-4f85-b70a-36e2b1fee467
 begin
-quadTempChange1 = tempVar[1] + 
+quadTempChange1 = 
 X[1,1]*deltaT[1]/availableArea[1,1] + X[1,2]*deltaT[2]/availableArea[1,2] + 	X[1,3]*deltaT[3]/availableArea[1,3] + X[1,4]*deltaT[4]/availableArea[1,4] + X[1,5]*deltaT[5]/availableArea[1,5] + X[1,6]*deltaT[6]/availableArea[1,6];
-
-quadTempChange2 = tempVar[2] + 
+quadTemp1 = oldTemp+tempVar[1]+quadTempChange1
+	
+quadTempChange2 = 
 X[2,1]*deltaT[1]/availableArea[2,1] + X[2,2]*deltaT[2]/availableArea[2,2] + 	X[2,3]*deltaT[3]/availableArea[2,3] + X[2,4]*deltaT[4]/availableArea[2,4] + X[2,5]*deltaT[5]/availableArea[2,5] + X[2,6]*deltaT[6]/availableArea[2,6];
-
-quadTempChange3 = tempVar[3] + 
+quadTemp2 = oldTemp+tempVar[2]+quadTempChange2
+	
+quadTempChange3 = 
 X[3,1]*deltaT[1]/availableArea[3,1] + X[3,2]*deltaT[2]/availableArea[3,2] + 	X[3,3]*deltaT[3]/availableArea[3,3] + X[3,4]*deltaT[4]/availableArea[3,4] + X[3,5]*deltaT[5]/availableArea[3,5] + X[3,6]*deltaT[6]/availableArea[3,6];
-
-quadTempChange4 = tempVar[4] + 
+quadTemp3 = oldTemp+tempVar[3]+quadTempChange3
+	
+quadTempChange4 = 
 X[4,1]*deltaT[1]/availableArea[4,1] + X[4,2]*deltaT[2]/availableArea[4,2] + 	X[4,3]*deltaT[3]/availableArea[4,3] + X[4,4]*deltaT[4]/availableArea[4,4] + X[4,5]*deltaT[5]/availableArea[4,5] + X[4,6]*deltaT[6]/availableArea[4,6];
+quadTemp4 = oldTemp+tempVar[4]+quadTempChange4
 end
 
 # ╔═╡ 66d0186f-5b39-404f-adbe-116191db4236
-temperatureChange = oldTemp - 1/totalArea*(quadrantArea[1]*quadTempChange1 +quadrantArea[2]*quadTempChange2 +quadrantArea[3]*quadTempChange3 +quadrantArea[3]*quadTempChange4);
+temperatureChange = oldTemp - (quadrantArea[1]*quadTemp1 + quadrantArea[2]*quadTemp2 + quadrantArea[3]*quadTemp3 +quadrantArea[4]*quadTemp4)/totalArea;
 
 # ╔═╡ d6bee536-f55d-45e0-b4fc-4c3d81fc8785
 # working on expression for the overall temperature change
@@ -251,7 +257,6 @@ value.(X)
 
 # ╔═╡ a9086a0a-2226-4a20-8154-bfd19f9f2a67
 value.(temperatureChange)
-
 
 # ╔═╡ Cell order:
 # ╠═06f79570-4636-11ec-1ab2-f36e6b5586f3
