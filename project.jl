@@ -209,6 +209,15 @@ temperatureChange = oldTemp - (quadrantArea[1]*quadTemp1 + quadrantArea[2]*quadT
 # working on expression for the overall temperature change
 @constraint(UHImodel, ResultingTemperatureChange, temperatureChange >= minTempChange )
 
+# ╔═╡ 3b7fdbef-ba91-4b2b-9afe-4d3617a1b74b
+begin
+	# Constraints for Individual Quadrant 
+	@constraint(UHImodel, quadTemp1 <= oldTemp - minTempChange)
+	@constraint(UHImodel, quadTemp2 <= oldTemp - minTempChange)
+	@constraint(UHImodel, quadTemp3 <= oldTemp - minTempChange)
+	@constraint(UHImodel, quadTemp4 <= oldTemp - minTempChange)
+end
+
 # ╔═╡ 5e6bc7d0-cc71-44f4-912e-7a8a9146c58e
 # constraint for Xij cannot be bigger than the available space
 @constraints(UHImodel, begin
@@ -258,6 +267,43 @@ value.(X)
 # ╔═╡ a9086a0a-2226-4a20-8154-bfd19f9f2a67
 value.(temperatureChange)
 
+# ╔═╡ fb973012-7fc0-43d7-8d0f-778911538b2c
+X[[1],:]
+
+# ╔═╡ 1039a89b-cac6-46c5-a71a-27f921145f93
+# Social Benefits: The greater the value, the more social benefit
+begin 
+	socialBenefit = zeros(1,4)
+	for i=1:4
+		socialBenefit[i] = value.(sum(X[[i],:]*methodWeights[[1],:]'))
+	end 
+	totalSocialBenefit = sum(socialBenefit)
+	for i = 1:4
+		socialBenefit[i] = socialBenefit[i]/totalSocialBenefit
+	end 
+end 
+
+# ╔═╡ 10f5f56f-0ae1-42db-9771-f91a94761464
+socialBenefit
+
+# ╔═╡ c55b2855-4611-48ac-8648-2fe29eea81f0
+# HVI Impact: The higher HVI should result in a higher impact 
+begin
+	impactHVI = zeros(1,4)
+	quadTemp = [quadTempChange1,quadTempChange2,quadTempChange3,quadTempChange4]
+	for i=1:4
+		impactHVI[i] = value.(HVIweights[i]*quadTemp[i])
+# 		value.(sum(X[:,[5]]*quadTemp[[1],:]'))
+	end 
+	totalImpactHVI = sum(impactHVI)
+	for i = 1:4
+		impactHVI[i] = impactHVI[i]/totalImpactHVI
+	end 
+end 
+
+# ╔═╡ 7f1a09c3-93e2-4d98-8edd-5f73ee9a6517
+impactHVI
+
 # ╔═╡ Cell order:
 # ╠═06f79570-4636-11ec-1ab2-f36e6b5586f3
 # ╠═41c5c9e1-179a-4d9f-8f10-deeb9770c102
@@ -284,9 +330,15 @@ value.(temperatureChange)
 # ╠═24e335d3-decb-4f85-b70a-36e2b1fee467
 # ╠═66d0186f-5b39-404f-adbe-116191db4236
 # ╠═d6bee536-f55d-45e0-b4fc-4c3d81fc8785
+# ╠═3b7fdbef-ba91-4b2b-9afe-4d3617a1b74b
 # ╠═5e6bc7d0-cc71-44f4-912e-7a8a9146c58e
 # ╠═152e438d-c7c6-4e02-91d3-c21ae78d264f
 # ╠═7751958e-9072-42d3-a0c8-b7cdedae617b
 # ╠═b1ce85d8-9518-48e6-851d-8ac84f25c6ed
 # ╠═b7688b63-963a-4094-913a-2de1df374b09
 # ╠═a9086a0a-2226-4a20-8154-bfd19f9f2a67
+# ╠═fb973012-7fc0-43d7-8d0f-778911538b2c
+# ╠═1039a89b-cac6-46c5-a71a-27f921145f93
+# ╠═10f5f56f-0ae1-42db-9771-f91a94761464
+# ╠═c55b2855-4611-48ac-8648-2fe29eea81f0
+# ╠═7f1a09c3-93e2-4d98-8edd-5f73ee9a6517
