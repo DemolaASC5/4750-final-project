@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.16.1
+# v0.17.0
 
 using Markdown
 using InteractiveUtils
@@ -100,11 +100,6 @@ md"""
 #### Objective: Minimize Cost
 minimizing the cost (installation + maintenace)
 
-#### Constraints:
-###### Nonnegativity
-Because we cannot have negative waste flows, all of the waste and residual streams must be greater or equal to zero. For the relevant i,j,k values:
-```math
-X_{ij} \geq 0
 ``` 
 """
 
@@ -275,7 +270,7 @@ X[[1],:]
 begin 
 	socialBenefit = zeros(1,4)
 	for i=1:4
-		socialBenefit[i] = value.(sum(X[[i],:]*methodWeights[[1],:]'))
+		socialBenefit[i] = value.(sum(X[[i],:].*methodWeights[[1],:]'))
 	end 
 	totalSocialBenefit = sum(socialBenefit)
 	for i = 1:4
@@ -294,12 +289,23 @@ begin
 	for i=1:4
 		impactHVI[i] = value.(HVIweights[i]*quadTemp[i])
 # 		value.(sum(X[:,[5]]*quadTemp[[1],:]'))
-	end 
-	totalImpactHVI = sum(impactHVI)
-	for i = 1:4
-		impactHVI[i] = impactHVI[i]/totalImpactHVI
+		impactHVI[i] = abs(impactHVI[i])
 	end 
 end 
+
+# ╔═╡ 4c88d6a4-c0d6-4d0c-8511-fc64a3ff08a2
+sum(impactHVI)
+
+# ╔═╡ 53c872fd-9607-44a2-a258-03c655af4a0e
+begin
+	totalImpactHVI = sum(impactHVI)
+		for i = 1:4
+			impactHVI[i] = impactHVI[i]/totalImpactHVI
+		end 
+end
+
+# ╔═╡ c2e97c84-fe94-42bd-9438-d26c7eb71627
+totalImpactHVI
 
 # ╔═╡ 7f1a09c3-93e2-4d98-8edd-5f73ee9a6517
 impactHVI
@@ -310,8 +316,8 @@ impactHVI
 # ╠═d6ccc27a-be8c-43e7-adc1-7f222944d169
 # ╠═e404eb93-06d1-47a0-9c0e-bf8a778b53ed
 # ╠═714f98f2-a42b-458d-99cd-28af107ca3c2
-# ╠═a4a11d6a-c7c3-4026-94d4-66f56f63475f
-# ╠═03d5dd5b-5992-4dc9-98c0-af18129482c3
+# ╟─a4a11d6a-c7c3-4026-94d4-66f56f63475f
+# ╟─03d5dd5b-5992-4dc9-98c0-af18129482c3
 # ╠═456f63c4-4d4b-4679-9c42-228787c29d9c
 # ╠═f31ec0b3-7a90-42e0-9969-f1bb6048e77c
 # ╠═586b6484-2062-471c-9bc4-f5e017ced3c1
@@ -341,4 +347,7 @@ impactHVI
 # ╠═1039a89b-cac6-46c5-a71a-27f921145f93
 # ╠═10f5f56f-0ae1-42db-9771-f91a94761464
 # ╠═c55b2855-4611-48ac-8648-2fe29eea81f0
+# ╠═4c88d6a4-c0d6-4d0c-8511-fc64a3ff08a2
+# ╠═53c872fd-9607-44a2-a258-03c655af4a0e
+# ╠═c2e97c84-fe94-42bd-9438-d26c7eb71627
 # ╠═7f1a09c3-93e2-4d98-8edd-5f73ee9a6517
