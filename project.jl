@@ -265,21 +265,40 @@ value.(temperatureChange)
 # ╔═╡ fb973012-7fc0-43d7-8d0f-778911538b2c
 X[[1],:]
 
+# ╔═╡ 8990ebd2-8192-4b5f-ad09-20751eb13b80
+md"""
+#### Working on social benefits constraint:
+"""
+
 # ╔═╡ 1039a89b-cac6-46c5-a71a-27f921145f93
 # Social Benefits: The greater the value, the more social benefit
 begin 
 	socialBenefit = zeros(1,4)
+	socialBenefitNORMALIZED = zeros(1,4) 
 	for i=1:4
 		socialBenefit[i] = value.(sum(X[[i],:].*methodWeights[[1],:]'))
 	end 
 	totalSocialBenefit = sum(socialBenefit)
-	for i = 1:4
-		socialBenefit[i] = socialBenefit[i]/totalSocialBenefit
-	end 
+end 
+
+# ╔═╡ a308f82f-1c21-49aa-b7f3-dc0ff8f258eb
+totalSocialBenefit
+
+# ╔═╡ 4d2790fb-d251-496e-bb85-e05077ea27f1
+socialBenefit
+
+# ╔═╡ 45d977cf-f83a-4f57-84f3-39e532063536
+for i = 1:4
+	socialBenefitNORMALIZED[i] = socialBenefit[i]/totalSocialBenefit
 end 
 
 # ╔═╡ 10f5f56f-0ae1-42db-9771-f91a94761464
-socialBenefit
+socialBenefitNORMALIZED
+
+# ╔═╡ 84825c4c-ea05-4b7b-bb4b-06e363f8cce0
+md"""
+#### HVI impact expression:
+"""
 
 # ╔═╡ c55b2855-4611-48ac-8648-2fe29eea81f0
 # HVI Impact: The higher HVI should result in a higher impact 
@@ -291,18 +310,11 @@ begin
 # 		value.(sum(X[:,[5]]*quadTemp[[1],:]'))
 		impactHVI[i] = abs(impactHVI[i])
 	end 
-end 
-
-# ╔═╡ 4c88d6a4-c0d6-4d0c-8511-fc64a3ff08a2
-sum(impactHVI)
-
-# ╔═╡ 53c872fd-9607-44a2-a258-03c655af4a0e
-begin
 	totalImpactHVI = sum(impactHVI)
-		for i = 1:4
-			impactHVI[i] = impactHVI[i]/totalImpactHVI
-		end 
-end
+	for i = 1:4
+		impactHVI[i] = impactHVI[i]/totalImpactHVI
+	end 
+end 
 
 # ╔═╡ c2e97c84-fe94-42bd-9438-d26c7eb71627
 totalImpactHVI
@@ -344,10 +356,13 @@ impactHVI
 # ╠═b7688b63-963a-4094-913a-2de1df374b09
 # ╠═a9086a0a-2226-4a20-8154-bfd19f9f2a67
 # ╠═fb973012-7fc0-43d7-8d0f-778911538b2c
+# ╟─8990ebd2-8192-4b5f-ad09-20751eb13b80
 # ╠═1039a89b-cac6-46c5-a71a-27f921145f93
+# ╠═a308f82f-1c21-49aa-b7f3-dc0ff8f258eb
+# ╠═4d2790fb-d251-496e-bb85-e05077ea27f1
+# ╠═45d977cf-f83a-4f57-84f3-39e532063536
 # ╠═10f5f56f-0ae1-42db-9771-f91a94761464
+# ╟─84825c4c-ea05-4b7b-bb4b-06e363f8cce0
 # ╠═c55b2855-4611-48ac-8648-2fe29eea81f0
-# ╠═4c88d6a4-c0d6-4d0c-8511-fc64a3ff08a2
-# ╠═53c872fd-9607-44a2-a258-03c655af4a0e
 # ╠═c2e97c84-fe94-42bd-9438-d26c7eb71627
 # ╠═7f1a09c3-93e2-4d98-8edd-5f73ee9a6517
