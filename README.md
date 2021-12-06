@@ -17,7 +17,7 @@ For Cormac, from command prompt or GitBash:
 ## Adding Changes (Pushing)
 1. `git add .`
 2. `git commit -m "message describing change"`
-3.  `git push origin repo name` (i.e. `git push origin anna` or `git push origin cormac`)  
+3.  `git push origin repo name` (i.e. `git push origin anna2` or `git push origin cormac`)  
     - If prompted to enter your credentials, your username is your GitHub username 
     - For password, you need to generate a <a href = "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token"> personal access token </a> (if you don't already have one). Once creating one, safe the access token where you can easily access it, since you'll need it to push any future changes. 
 
