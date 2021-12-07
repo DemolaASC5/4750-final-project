@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.0
+# v0.16.1
 
 using Markdown
 using InteractiveUtils
@@ -247,6 +247,22 @@ end
 end)
 # need to somehow include the social benefits/weights
 
+# ╔═╡ fd74a332-834d-460b-96ce-0df169ea3d93
+md"""
+#### Working on social benefits constraint:
+"""
+
+# ╔═╡ b4ea8215-0448-4efd-a4b1-6411d5b6a844
+# Social Benefits: The greater the value, the more social benefit
+begin 
+	@variable(UHImodel, socialConstraint[i=1:4] >= 0)
+	methodWeightAvg = Statistics.mean(methodWeights[[1],:])
+	@constraint(UHImodel, sum(X[[1],:].*methodWeights[[1],:]') >= sum(X[[1],:]*methodWeightAvg))
+	@constraint(UHImodel, sum(X[[2],:].*methodWeights[[1],:]') >= sum(X[[2],:]*methodWeightAvg))
+	@constraint(UHImodel, sum(X[[3],:].*methodWeights[[1],:]') >= sum(X[[3],:]*methodWeightAvg))
+	@constraint(UHImodel, sum(X[[4],:].*methodWeights[[1],:]') >= sum(X[[4],:]*methodWeightAvg)) 
+end 
+
 # ╔═╡ 152e438d-c7c6-4e02-91d3-c21ae78d264f
 latex_formulation(UHImodel)
 
@@ -267,7 +283,7 @@ X[[1],:]
 
 # ╔═╡ 8990ebd2-8192-4b5f-ad09-20751eb13b80
 md"""
-#### Working on social benefits constraint:
+#### Social Benefits Analysis:
 """
 
 # ╔═╡ 1039a89b-cac6-46c5-a71a-27f921145f93
@@ -350,6 +366,8 @@ impactHVI
 # ╠═d6bee536-f55d-45e0-b4fc-4c3d81fc8785
 # ╠═3b7fdbef-ba91-4b2b-9afe-4d3617a1b74b
 # ╠═5e6bc7d0-cc71-44f4-912e-7a8a9146c58e
+# ╟─fd74a332-834d-460b-96ce-0df169ea3d93
+# ╠═b4ea8215-0448-4efd-a4b1-6411d5b6a844
 # ╠═152e438d-c7c6-4e02-91d3-c21ae78d264f
 # ╠═7751958e-9072-42d3-a0c8-b7cdedae617b
 # ╠═b1ce85d8-9518-48e6-851d-8ac84f25c6ed
