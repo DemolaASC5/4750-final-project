@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.0
+# v0.16.1
 
 using Markdown
 using InteractiveUtils
@@ -7,7 +7,7 @@ using InteractiveUtils
 # ╔═╡ 41c5c9e1-179a-4d9f-8f10-deeb9770c102
 begin
 	using Pkg
-	Pkg.add("XLSX")
+	# Pkg.add("XLSX")
 	Pkg.add("Statistics")
 end
 
@@ -21,75 +21,75 @@ students = [(name = "Anna Cliche", cornell_id = "amc527"),
 
 # ╔═╡ d6ccc27a-be8c-43e7-adc1-7f222944d169
 begin
-	import XLSX
+	# import XLSX
 	import Statistics
 end
 
 # ╔═╡ e404eb93-06d1-47a0-9c0e-bf8a778b53ed
 # Defining Global Variables
-begin 
-	xf = XLSX.readdata("Tidy/HVI_Ranking_Cleaned.xlsx", "HVI!A1:D176")
-    geoid = xf[:,1][2:176]
-	temp = xf[:,2][2:176]
-	z_score = xf[:,3][2:176]
-	std = Statistics.mean(xf[:,4][2:176])
-	average = 87
-	extreme = 96 
-	average_temp = []
-	extreme_temp = []
-	q1 = [] 
-	q2 = []
-	q3 = []
-	q4 = []
-end 
+# begin 
+# 	xf = XLSX.readdata("Tidy/HVI_Ranking_Cleaned.xlsx", "HVI!A1:D176")
+#     geoid = xf[:,1][2:176]
+# 	temp = xf[:,2][2:176]
+# 	z_score = xf[:,3][2:176]
+# 	std = Statistics.mean(xf[:,4][2:176])
+# 	average = 87
+# 	extreme = 96 
+# 	average_temp = []
+# 	extreme_temp = []
+# 	q1 = [] 
+# 	q2 = []
+# 	q3 = []
+# 	q4 = []
+# end 
 
 # ╔═╡ 714f98f2-a42b-458d-99cd-28af107ca3c2
 # Helper Function Converting Fahrenheit to Celsius
-function get_celsius(farenheit)
-	return 5*(farenheit-32)*(1/9)
-end 
+# function get_celsius(farenheit)
+# 	return 5*(farenheit-32)*(1/9)
+# end 
 
 # ╔═╡ a4a11d6a-c7c3-4026-94d4-66f56f63475f
 # Recalculating Means with New Temperatures 
-begin
-	i = 1 
-	while i < length(temp)
-		push!(average_temp, get_celsius(z_score[i]*std+average))
-		push!(extreme_temp, get_celsius(z_score[i]*std+extreme))
-		i+=1
-	end 
-end 
+# begin
+# 	i = 1 
+# 	while i < length(temp)
+# 		push!(average_temp, get_celsius(z_score[i]*std+average))
+# 		push!(extreme_temp, get_celsius(z_score[i]*std+extreme))
+# 		i+=1
+# 	end 
+# end 
 
 # ╔═╡ 03d5dd5b-5992-4dc9-98c0-af18129482c3
 # Adding Ranges to Quartiles
-begin 
-	separator = (maximum(average_temp) - minimum(average_temp))/4
-	index = 1
-	while index < length(temp)
-		if average_temp[index] > get_celsius(average) - 2*separator && average_temp[index] <= get_celsius(average) - separator
-			push!(q1, [geoid[index], average_temp[index], extreme_temp[index]]) 
-		elseif average_temp[index] > get_celsius(average) - separator && average_temp[index] <= get_celsius(average)
-			push!(q2, [geoid[index], average_temp[index], extreme_temp[index]])
-		elseif average_temp[index] > get_celsius(average) && average_temp[index] <= get_celsius(average) + separator
-			push!(q3, [geoid[index], average_temp[index], extreme_temp[index]]) 
-		else 
-			push!(q4, [geoid[index], average_temp[index], extreme_temp[index]])
-		end 
-		index += 1
-	end 
-end 
+# begin 
+# 	separator = (maximum(average_temp) - minimum(average_temp))/4
+# 	index = 1
+# 	while index < length(temp)
+# 		if average_temp[index] > get_celsius(average) - 2*separator && average_temp[index] <= get_celsius(average) - separator
+# 			push!(q1, [geoid[index], average_temp[index], extreme_temp[index]]) 
+# 		elseif average_temp[index] > get_celsius(average) - separator && average_temp[index] <= get_celsius(average)
+# 			push!(q2, [geoid[index], average_temp[index], extreme_temp[index]])
+# 		elseif average_temp[index] > get_celsius(average) && average_temp[index] <= get_celsius(average) + separator
+# 			push!(q3, [geoid[index], average_temp[index], extreme_temp[index]]) 
+# 		else 
+# 			push!(q4, [geoid[index], average_temp[index], extreme_temp[index]])
+# 		end 
+# 		index += 1
+# 	end 
+# end 
 
 # ╔═╡ 456f63c4-4d4b-4679-9c42-228787c29d9c
-length(q1)
+# length(q1)
 
 # ╔═╡ f31ec0b3-7a90-42e0-9969-f1bb6048e77c
-length(q2)
+# length(q2)
 
 # ╔═╡ 586b6484-2062-471c-9bc4-f5e017ced3c1
-length(q3)
+# length(q3)
 
 # ╔═╡ 60a19d85-c9e4-4f17-b12d-6c83ff29d0bf
-length(q4)
+# length(q4)
 
 # ╔═╡ ee0dee84-a004-4d92-961d-af819f1393a8
 md"""
@@ -247,6 +247,24 @@ end
 end)
 # need to somehow include the social benefits/weights
 
+# ╔═╡ ab2a5622-3db5-49c9-b98f-7dfb418820b4
+md"""
+#### Working on social benefits constraint:
+"""
+
+# ╔═╡ cfac8f77-8b70-451a-9e5f-40253550d1be
+# Social Benefits: The greater the value, the more social benefit
+begin 
+	@variable(UHImodel, socialConstraint[i=1:4, j=1:6])
+	methodWeightAvg = Statistics.mean(methodWeights[[1],:])
+	for i=1:4
+		for j=1:6
+			@constraint(UHImodel, socialConstraint[i,j] == X[i,j]*methodWeights[j])
+		end 
+		@constraint(UHImodel, sum(socialConstraint[[i],:]) >= sum(X[[i],:]*0.25))
+	end 
+end 
+
 # ╔═╡ 152e438d-c7c6-4e02-91d3-c21ae78d264f
 latex_formulation(UHImodel)
 
@@ -267,7 +285,7 @@ X[[1],:]
 
 # ╔═╡ 8990ebd2-8192-4b5f-ad09-20751eb13b80
 md"""
-#### Working on social benefits constraint:
+#### Social Benefits Analysis:
 """
 
 # ╔═╡ 1039a89b-cac6-46c5-a71a-27f921145f93
@@ -307,7 +325,6 @@ begin
 	quadTemp = [quadTempChange1,quadTempChange2,quadTempChange3,quadTempChange4]
 	for i=1:4
 		impactHVI[i] = value.(HVIweights[i]*quadTemp[i])
-# 		value.(sum(X[:,[5]]*quadTemp[[1],:]'))
 		impactHVI[i] = abs(impactHVI[i])
 	end 
 	totalImpactHVI = sum(impactHVI)
@@ -326,14 +343,14 @@ impactHVI
 # ╠═06f79570-4636-11ec-1ab2-f36e6b5586f3
 # ╠═41c5c9e1-179a-4d9f-8f10-deeb9770c102
 # ╠═d6ccc27a-be8c-43e7-adc1-7f222944d169
-# ╠═e404eb93-06d1-47a0-9c0e-bf8a778b53ed
-# ╠═714f98f2-a42b-458d-99cd-28af107ca3c2
+# ╟─e404eb93-06d1-47a0-9c0e-bf8a778b53ed
+# ╟─714f98f2-a42b-458d-99cd-28af107ca3c2
 # ╟─a4a11d6a-c7c3-4026-94d4-66f56f63475f
 # ╟─03d5dd5b-5992-4dc9-98c0-af18129482c3
-# ╠═456f63c4-4d4b-4679-9c42-228787c29d9c
-# ╠═f31ec0b3-7a90-42e0-9969-f1bb6048e77c
-# ╠═586b6484-2062-471c-9bc4-f5e017ced3c1
-# ╠═60a19d85-c9e4-4f17-b12d-6c83ff29d0bf
+# ╟─456f63c4-4d4b-4679-9c42-228787c29d9c
+# ╟─f31ec0b3-7a90-42e0-9969-f1bb6048e77c
+# ╟─586b6484-2062-471c-9bc4-f5e017ced3c1
+# ╟─60a19d85-c9e4-4f17-b12d-6c83ff29d0bf
 # ╟─ee0dee84-a004-4d92-961d-af819f1393a8
 # ╠═bab59ba1-0506-4ec8-a87f-4f55d49062f5
 # ╠═d84e1d84-2ed0-4e49-9034-294908a64d6d
@@ -350,6 +367,8 @@ impactHVI
 # ╠═d6bee536-f55d-45e0-b4fc-4c3d81fc8785
 # ╠═3b7fdbef-ba91-4b2b-9afe-4d3617a1b74b
 # ╠═5e6bc7d0-cc71-44f4-912e-7a8a9146c58e
+# ╟─ab2a5622-3db5-49c9-b98f-7dfb418820b4
+# ╠═cfac8f77-8b70-451a-9e5f-40253550d1be
 # ╠═152e438d-c7c6-4e02-91d3-c21ae78d264f
 # ╠═7751958e-9072-42d3-a0c8-b7cdedae617b
 # ╠═b1ce85d8-9518-48e6-851d-8ac84f25c6ed
