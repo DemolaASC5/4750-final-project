@@ -256,7 +256,7 @@ md"""
 #### Working on social benefits constraint:
 """
 
-# ╔═╡ 6a67ce8e-c0e0-4f8a-90aa-dd3f9cb2b295
+# ╔═╡ cfac8f77-8b70-451a-9e5f-40253550d1be
 # Social Benefits: The greater the value, the more social benefit
 begin 
 	@variable(UHImodel, socialConstraint[i=1:4, j=1:6])
@@ -267,7 +267,6 @@ begin
 		end 
 		@constraint(UHImodel, sum(socialConstraint[[i],:]) >= sum(X[[i],:]*0.25))
 	end 
-end 
 
 # ╔═╡ 152e438d-c7c6-4e02-91d3-c21ae78d264f
 latex_formulation(UHImodel)
@@ -372,7 +371,7 @@ impactHVI
 # ╠═3b7fdbef-ba91-4b2b-9afe-4d3617a1b74b
 # ╠═5e6bc7d0-cc71-44f4-912e-7a8a9146c58e
 # ╟─fd74a332-834d-460b-96ce-0df169ea3d93
-# ╠═6a67ce8e-c0e0-4f8a-90aa-dd3f9cb2b295
+# ╠═b4ea8215-0448-4efd-a4b1-6411d5b6a844
 # ╠═152e438d-c7c6-4e02-91d3-c21ae78d264f
 # ╠═7751958e-9072-42d3-a0c8-b7cdedae617b
 # ╠═b1ce85d8-9518-48e6-851d-8ac84f25c6ed
