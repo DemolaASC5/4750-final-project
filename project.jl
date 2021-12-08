@@ -104,8 +104,8 @@ minimizing the cost (installation + maintenace)
 """
 
 # ╔═╡ bab59ba1-0506-4ec8-a87f-4f55d49062f5
-#oldTemp = 30.55; #Celsius, regular
-oldTemp =  36.67; #extreme heat day
+oldTemp = 30.55; #Celsius, regular
+#oldTemp =  36.67; #extreme heat day
 
 # ╔═╡ d84e1d84-2ed0-4e49-9034-294908a64d6d
 begin
