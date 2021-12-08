@@ -104,7 +104,8 @@ minimizing the cost (installation + maintenace)
 """
 
 # ╔═╡ bab59ba1-0506-4ec8-a87f-4f55d49062f5
-oldTemp = 30.55; #Celsius
+oldTemp = 30.55; #Celsius, regular
+#oldTemp =  36.67; #extreme heat day
 
 # ╔═╡ d84e1d84-2ed0-4e49-9034-294908a64d6d
 begin
@@ -114,7 +115,9 @@ begin
 	#quartiles:  1 	2 	3 	4
 	HVIweights = [0.1 0.2 0.3 0.4];
 	percentArea = [.20 .23 .27 .30];
-	tempVar = [-1.265741024 -0.436508545 0.308562915 0.904330533];
+	#tempVar = [-1.265741024 -0.436508545 0.308562915 0.904330533]; #the degree deviation from the mean temp
+	tempVar2 = [-0.041853195 -0.014433661 0.010202991 0.029902738]; #the % deviation from the mean temp
+	tempVar = oldTemp.*tempVar2;
 	
 	# the following given the percent of the each quartiles area that is un/available for each treatment method:
 	perUnavailable = [.60 .30 .30 .20]; #A
@@ -247,7 +250,8 @@ end
 end)
 # need to somehow include the social benefits/weights
 
-# ╔═╡ ab2a5622-3db5-49c9-b98f-7dfb418820b4
+
+# ╔═╡ fd74a332-834d-460b-96ce-0df169ea3d93
 md"""
 #### Working on social benefits constraint:
 """
@@ -263,7 +267,6 @@ begin
 		end 
 		@constraint(UHImodel, sum(socialConstraint[[i],:]) >= sum(X[[i],:]*0.25))
 	end 
-end 
 
 # ╔═╡ 152e438d-c7c6-4e02-91d3-c21ae78d264f
 latex_formulation(UHImodel)
@@ -367,8 +370,8 @@ impactHVI
 # ╠═d6bee536-f55d-45e0-b4fc-4c3d81fc8785
 # ╠═3b7fdbef-ba91-4b2b-9afe-4d3617a1b74b
 # ╠═5e6bc7d0-cc71-44f4-912e-7a8a9146c58e
-# ╟─ab2a5622-3db5-49c9-b98f-7dfb418820b4
-# ╠═cfac8f77-8b70-451a-9e5f-40253550d1be
+# ╟─fd74a332-834d-460b-96ce-0df169ea3d93
+# ╠═b4ea8215-0448-4efd-a4b1-6411d5b6a844
 # ╠═152e438d-c7c6-4e02-91d3-c21ae78d264f
 # ╠═7751958e-9072-42d3-a0c8-b7cdedae617b
 # ╠═b1ce85d8-9518-48e6-851d-8ac84f25c6ed
