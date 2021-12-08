@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.16.1
+# v0.17.0
 
 using Markdown
 using InteractiveUtils
@@ -104,7 +104,8 @@ minimizing the cost (installation + maintenace)
 """
 
 # ╔═╡ bab59ba1-0506-4ec8-a87f-4f55d49062f5
-oldTemp = 30.55; #Celsius
+oldTemp = 30.55; #Celsius, regular
+#oldTemp =  36.67; #extreme heat day
 
 # ╔═╡ d84e1d84-2ed0-4e49-9034-294908a64d6d
 begin
@@ -114,7 +115,9 @@ begin
 	#quartiles:  1 	2 	3 	4
 	HVIweights = [0.1 0.2 0.3 0.4];
 	percentArea = [.20 .23 .27 .30];
-	tempVar = [-1.265741024 -0.436508545 0.308562915 0.904330533];
+	#tempVar = [-1.265741024 -0.436508545 0.308562915 0.904330533]; #the degree deviation from the mean temp
+	tempVar2 = [-0.041853195 -0.014433661 0.010202991 0.029902738]; #the % deviation from the mean temp
+	tempVar = oldTemp.*tempVar2;
 	
 	# the following given the percent of the each quartiles area that is un/available for each treatment method:
 	perUnavailable = [.60 .30 .30 .20]; #A
