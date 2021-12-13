@@ -104,7 +104,7 @@ minimizing the cost (installation + maintenace)
 """
 
 # ╔═╡ bab59ba1-0506-4ec8-a87f-4f55d49062f5
-global oldTemp = 30.55; #Celsius, regular
+oldTemp = 30.55; #Celsius, regular
 #oldTemp =  36.67; #extreme heat day
 
 # ╔═╡ d84e1d84-2ed0-4e49-9034-294908a64d6d
@@ -205,24 +205,16 @@ temperatureChange = oldTemp - (quadrantArea[1]*quadTemp1 + quadrantArea[2]*quadT
 
 # ╔═╡ d6bee536-f55d-45e0-b4fc-4c3d81fc8785
 # working on expression for the overall temperature change
-function resultingTemperatureChange()
-	@constraint(UHImodel, c, temperatureChange >= minTempChange )
-end 
-
-# ╔═╡ 89dd1c90-8c9c-4bcb-aa1f-b0c053a98c11
-resultingTemperatureChange();
+@constraint(UHImodel, ResultingTemperatureChange, temperatureChange >= minTempChange )
 
 # ╔═╡ 3b7fdbef-ba91-4b2b-9afe-4d3617a1b74b
-function registerTempChange()
+begin
 	# Constraints for Individual Quadrant 
-	@constraint(UHImodel, tempChange1, quadTemp1 <= oldTemp - minTempChange)
-	@constraint(UHImodel, tempChange2, quadTemp2 <= oldTemp - minTempChange)
-	@constraint(UHImodel, tempChange3, quadTemp3 <= oldTemp - minTempChange)
-	@constraint(UHImodel, tempChange4 ,quadTemp4 <= oldTemp - minTempChange)
+	@constraint(UHImodel, quadTemp1 <= oldTemp - minTempChange)
+	@constraint(UHImodel, quadTemp2 <= oldTemp - minTempChange)
+	@constraint(UHImodel, quadTemp3 <= oldTemp - minTempChange)
+	@constraint(UHImodel, quadTemp4 <= oldTemp - minTempChange)
 end
-
-# ╔═╡ 8d8f31ca-0bee-482b-bb2e-ad99152d6afc
-registerTempChange()
 
 # ╔═╡ 5e6bc7d0-cc71-44f4-912e-7a8a9146c58e
 # constraint for Xij cannot be bigger than the available space
@@ -266,7 +258,7 @@ md"""
 
 # ╔═╡ 6a67ce8e-c0e0-4f8a-90aa-dd3f9cb2b295
 # Social Benefits: The greater the value, the more social benefit
-function socialBenefitsConstraint()
+begin 
 	@variable(UHImodel, socialConstraint[i=1:4, j=1:6])
 	methodWeightAvg = Statistics.mean(methodWeights[[1],:])
 	for i=1:4
@@ -276,9 +268,6 @@ function socialBenefitsConstraint()
 		@constraint(UHImodel, sum(socialConstraint[[i],:]) >= sum(X[[i],:]*0.25))
 	end 
 end 
-
-# ╔═╡ 2c24e39a-0ee5-4673-980e-e14e6c6be4cf
-socialBenefitsConstraint(); 
 
 # ╔═╡ 152e438d-c7c6-4e02-91d3-c21ae78d264f
 latex_formulation(UHImodel)
@@ -354,49 +343,6 @@ totalImpactHVI
 # ╔═╡ 7f1a09c3-93e2-4d98-8edd-5f73ee9a6517
 impactHVI
 
-# ╔═╡ d1fab3a4-1f1c-44f5-a06c-0258c65e7283
-md"""
-#### Temperature Change Evaluation:
-"""
-
-# ╔═╡ 18740617-4f46-4165-933e-2c83a84ab4ba
-begin 
-	tempChanges = []
-	overallTempChanges = []
-end 
-
-# ╔═╡ 04bbb0be-dfaa-4db7-8c73-3fd3d6cd582d
-function getTempChanges(temp) 
-	oldTemp = 36;
-	unregister(UHImodel, :tempChange1)
-	unregister(UHImodel, :tempChange2)
-	unregister(UHImodel, :tempChange3)
-	unregister(UHImodel, :tempChange4)
-	unregister(UHImodel, :socialConstraint)
-	unregister(UHImodel, :c)
-	# unregister(UHImodel, :c)
-	# registerTempChange();
-	@constraint(UHImodel, tempChange1, quadTemp1 <= temp - minTempChange)
-	@constraint(UHImodel, tempChange2, quadTemp2 <= temp - minTempChange)
-	@constraint(UHImodel, tempChange3, quadTemp3 <= temp - minTempChange)
-	@constraint(UHImodel, tempChange4 ,quadTemp4 <= temp - minTempChange)
-	println(oldTemp)
-	resultingTemperatureChange();
-	socialBenefitsConstraint(); 
-	optimize!(UHImodel)
-	push!(tempChanges,[value.(quadTempChange1),value.(quadTempChange2),value.(quadTempChange3),value.(quadTempChange4)])
-	push!(overallTempChanges, value.(temperatureChange))
-end 
-
-# ╔═╡ 5f73d955-e217-4f47-a475-a73f8a815128
-function evaluateTempChanges(temp1,temp2)
-	getTempChanges(temp1)
-	getTempChanges(temp2)
-end 
-
-# ╔═╡ a15f4cf1-2635-4ba4-aa73-0de73220777f
-getTempChanges(36)
-
 # ╔═╡ Cell order:
 # ╠═06f79570-4636-11ec-1ab2-f36e6b5586f3
 # ╠═41c5c9e1-179a-4d9f-8f10-deeb9770c102
@@ -409,7 +355,7 @@ getTempChanges(36)
 # ╟─f31ec0b3-7a90-42e0-9969-f1bb6048e77c
 # ╟─586b6484-2062-471c-9bc4-f5e017ced3c1
 # ╟─60a19d85-c9e4-4f17-b12d-6c83ff29d0bf
-# ╠═ee0dee84-a004-4d92-961d-af819f1393a8
+# ╟─ee0dee84-a004-4d92-961d-af819f1393a8
 # ╠═bab59ba1-0506-4ec8-a87f-4f55d49062f5
 # ╠═d84e1d84-2ed0-4e49-9034-294908a64d6d
 # ╠═d2212704-6a76-45e3-bb6a-ffddd6d1c4c8
@@ -423,13 +369,10 @@ getTempChanges(36)
 # ╠═24e335d3-decb-4f85-b70a-36e2b1fee467
 # ╠═66d0186f-5b39-404f-adbe-116191db4236
 # ╠═d6bee536-f55d-45e0-b4fc-4c3d81fc8785
-# ╠═89dd1c90-8c9c-4bcb-aa1f-b0c053a98c11
 # ╠═3b7fdbef-ba91-4b2b-9afe-4d3617a1b74b
-# ╠═8d8f31ca-0bee-482b-bb2e-ad99152d6afc
 # ╠═5e6bc7d0-cc71-44f4-912e-7a8a9146c58e
 # ╟─fd74a332-834d-460b-96ce-0df169ea3d93
 # ╠═6a67ce8e-c0e0-4f8a-90aa-dd3f9cb2b295
-# ╠═2c24e39a-0ee5-4673-980e-e14e6c6be4cf
 # ╠═152e438d-c7c6-4e02-91d3-c21ae78d264f
 # ╠═7751958e-9072-42d3-a0c8-b7cdedae617b
 # ╠═b1ce85d8-9518-48e6-851d-8ac84f25c6ed
@@ -446,8 +389,3 @@ getTempChanges(36)
 # ╠═c55b2855-4611-48ac-8648-2fe29eea81f0
 # ╠═c2e97c84-fe94-42bd-9438-d26c7eb71627
 # ╠═7f1a09c3-93e2-4d98-8edd-5f73ee9a6517
-# ╠═d1fab3a4-1f1c-44f5-a06c-0258c65e7283
-# ╠═18740617-4f46-4165-933e-2c83a84ab4ba
-# ╠═5f73d955-e217-4f47-a475-a73f8a815128
-# ╠═04bbb0be-dfaa-4db7-8c73-3fd3d6cd582d
-# ╠═a15f4cf1-2635-4ba4-aa73-0de73220777f
