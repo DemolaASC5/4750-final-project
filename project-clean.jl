@@ -229,9 +229,20 @@ md"""
 Adds each optimization iteration of the model into modelDictionary, given an original temperature, oldTemp and a minimum temperature change, minTempChange
 """
 
+# ╔═╡ 6b6588b2-b1b9-4057-ae51-b38a907a2af2
+md"""
+#### Latex Formulation of the Model  
+"""
+
+# ╔═╡ dd797a9c-02fb-4129-9b90-46bbf09fa927
+# Helper Function 
+function showLatex(model)
+	latex_formulation(model); 
+end 
+
 # ╔═╡ 7dbd5761-a4b9-47ba-a9c2-13f0f73e0166
 # Adds each optimization iteration of the model into modelDictionary, given an original temperature, oldTemp and a minimum temperature change, minTempChange
-function getData(oldTemp,minTempChange)
+function getData(oldTemp,minTempChange,displayLatex)
 	modelData = optimizeUHIModel(oldTemp, minTempChange)
 	UHImodel = modelData[1]
 	X = modelData[2]
@@ -240,19 +251,35 @@ function getData(oldTemp,minTempChange)
 	quadTempChange = [modelData[8],modelData[9], modelData[10], modelData[11]]
 	push!(modelDictionary,[Dict("Old Temp" => oldTemp, "Minimum Temp Change" => minTempChange,"Objective " => objective_value(UHImodel), "X" => value.(X), "Temperature Change" => value.(temperatureChange), "Quad Temp" =>([value.(quadTemp[1]),value.(quadTemp[2]),value.(quadTemp[3]),value.(quadTemp[4])]), "Quad Temp Change" =>([value.(quadTempChange[1]),value.(quadTempChange[2]),value.(quadTempChange[3]),value.(quadTempChange[4])]), "Social Benefit"=>(socialBenefitAnalysis(X)), "Impact HVI" => impactHVI(quadTemp))
 	])
-	return latex_formulation(UHImodel)
+	if displayLatex == true
+		showLatex(UHImodel); 
+	end 
 end
 
-# ╔═╡ 6b6588b2-b1b9-4057-ae51-b38a907a2af2
+# ╔═╡ 45b549e1-e32b-43c0-bf2d-5bf6c50aaa99
+getData(30.55,0.5,true)
+
+# ╔═╡ 2016c64f-0748-4a4a-9011-be9179faf144
 md"""
-#### Latex Formulation of the Model  
+#### getData Documentation 
+
+Takes in three parameters:  
+- oldTemp: initial temperature (number)
+- minTempChange: temperature change (number)
+- displayLatex: boolean; displays Latex if set to true 
+	
+
 """
 
-# ╔═╡ 45b549e1-e32b-43c0-bf2d-5bf6c50aaa99
-getData(30.55,0.5)
+# ╔═╡ 218332e1-ebdc-4fe5-b09b-494666c5b15a
+function resetDictionary()
+	while length(modelDictionary) > 0 
+		pop!(modelDictionary)
+	end 
+end 
 
-# ╔═╡ 3354f9db-cf87-4809-8872-d19bf8118abc
-keys(modelDictionary[1][1])
+# ╔═╡ 65ad7161-1e58-4605-85fa-decbe3f67b2a
+resetDictionary()
 
 # ╔═╡ 04f96896-39ec-48ce-ad9f-ce7d5bcd39b0
 md"""
@@ -261,8 +288,12 @@ md"""
 General Form: modelDictionary[1][1][key]
 - first index represents the index of modelDictionary 
 - second index is always 1 
-- third index is a key (see valid key values above)
+- third index is a key (see valid key values below)
+
 """
+
+# ╔═╡ 3354f9db-cf87-4809-8872-d19bf8118abc
+keys(modelDictionary[1][1])
 
 # ╔═╡ 302b7089-afba-43e8-8190-b7af6876aeab
 # Accessing modelDictionary iterations
@@ -270,6 +301,9 @@ General Form: modelDictionary[1][1][key]
 # 	where the first index represents the index of modelDictionary 
 #   second index is always 1 
 #   third index is a key (see valid key values above)
+
+# ╔═╡ 8c4c9001-ce54-4a1f-9c9a-ed673548f304
+getData(36.67, 0.5,false)
 
 # ╔═╡ 69191c17-142a-4952-987d-d6c9ec26d61f
 modelDictionary
@@ -291,8 +325,13 @@ modelDictionary
 # ╟─49e2884a-c1ca-43cb-9c15-c651a0155125
 # ╠═7dbd5761-a4b9-47ba-a9c2-13f0f73e0166
 # ╟─6b6588b2-b1b9-4057-ae51-b38a907a2af2
+# ╟─dd797a9c-02fb-4129-9b90-46bbf09fa927
 # ╟─45b549e1-e32b-43c0-bf2d-5bf6c50aaa99
-# ╠═3354f9db-cf87-4809-8872-d19bf8118abc
+# ╟─2016c64f-0748-4a4a-9011-be9179faf144
+# ╠═218332e1-ebdc-4fe5-b09b-494666c5b15a
+# ╠═65ad7161-1e58-4605-85fa-decbe3f67b2a
 # ╟─04f96896-39ec-48ce-ad9f-ce7d5bcd39b0
+# ╟─3354f9db-cf87-4809-8872-d19bf8118abc
 # ╠═302b7089-afba-43e8-8190-b7af6876aeab
+# ╠═8c4c9001-ce54-4a1f-9c9a-ed673548f304
 # ╠═69191c17-142a-4952-987d-d6c9ec26d61f
