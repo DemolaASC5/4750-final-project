@@ -79,14 +79,23 @@ md"""
 Find the minimum cost needed to install and maintain technologies to reduce the Urban Heat Island effect given an original temperature and a desired minimum temperature change. 
 
 #### Decision Variables
-- ``X_{ij}`` represents the area of section i that is renovated to method j (in mi)
+- ``X_{ij}`` represents the area of quadrant i that is renovated to method j (in mi)
+- ``socialConstraint_{ij}`` represents the social benefit caused by the use of method of j over the area of quadrant i
 
 
 #### Other Variables of Interest
-- 
+- ``quadTempChange1`` represents the temperature change in quadrant 1 caused by treatment (in degrees Celsius)
+- ``quadTempChange2`` represents the temperature change in quadrant 2 caused by treatment (in degrees Celsius)
+- ``quadTempChange3`` represents the temperature change in quadrant 3 caused by treatment (in degrees Celsius)
+- ``quadTempChange4`` represents the temperature change in quadrant 4 caused by treatment (in degrees Celsius)
+- ``temperatureChange`` represents the overall temperature change due treatment (in degrees Celsius)
 
 #### Constraints 
-- 
+- The overall temperature change from the model must exceed or be equal to the minimum temperature change 
+- The temperature change in each quadrant must be less than or equal to the idealized temperature (oldTemp - minTempChange)
+- The treatment applied to each area of the quadrant that is renovated to method j must not exceed the available area for that treatment
+- The social constraint for each area of the quadrant that is renovated to method j must be equal to the treatment allotted for that area multiplied by the social impact of that treatment method. 
+- The net social benefit impact for each quadrant, defined as the sum of the social benefits for a quadrant divided by the area of quadrant that is renovated to method j, must exceed 0.25 
 
 """
 
@@ -169,7 +178,7 @@ quadTemp4 = oldTemp+tempVar[4]+quadTempChange4
 		for j=1:6
 			@constraint(UHImodel, socialConstraint[i,j] == 		     	X[i,j]*methodWeights[j])
 		end 
-		@constraint(UHImodel, sum(socialConstraint[[i],:]) >= sum(X[[i],:]*0.25))
+		@constraint(UHImodel, sum(socialConstraint[[i],:]) >= (0.25)*sum(X[[i],:]))
 	end
 	
 	# Optimizing Model
@@ -179,9 +188,6 @@ quadTemp4 = oldTemp+tempVar[4]+quadTempChange4
 	return [UHImodel, X,temperatureChange,quadTemp1,quadTemp2,quadTemp3,quadTemp4,quadTempChange1,quadTempChange2,quadTempChange3,quadTempChange4]
 	
 end 
-
-# ╔═╡ 4552a8e2-f967-41af-bdae-ba1da6e6cbc9
-# latex_formulation(UHImodel)
 
 # ╔═╡ e6be1381-0c80-4680-9203-1656999273c7
 md"""
@@ -201,33 +207,33 @@ function socialBenefitAnalysis(X)
 	for i = 1:4
 		socialBenefitNORMALIZED[i] = socialBenefit[i]/totalSocialBenefit
 	end 
-	return socialBenefitNORMALIZED; 
+	return [socialBenefit, socialBenefitNORMALIZED]; 
 end 
 
 # ╔═╡ d99db411-71d3-4f31-84c2-3a247c3d34a3
 # HVI Impact: The higher HVI should result in a higher impact 
-function impactHVI(quadTemp)
+function impactHVI(quadTempChange)
 	impactHVI = zeros(1,4)
 	for i=1:4
-		impactHVI[i] = value.(HVIweights[i]*quadTemp[i])
+		impactHVI[i] = value.(HVIweights[i]*quadTempChange[i])
 		impactHVI[i] = abs(impactHVI[i])
 	end 
 	totalImpactHVI = sum(impactHVI)
 	for i = 1:4
 		impactHVI[i] = impactHVI[i]/totalImpactHVI
 	end 
-	return impactHVI; 
+	return [totalImpactHVI,impactHVI]; 
 end 
-
-# ╔═╡ 7376f003-edfb-46f3-8794-009dccbc3f69
-# Array to store iterations of the model 
-modelDictionary = []
 
 # ╔═╡ 49e2884a-c1ca-43cb-9c15-c651a0155125
 md"""
 #### Running Optimization Multiple Times: getData Function  
 Adds each optimization iteration of the model into modelDictionary, given an original temperature, oldTemp and a minimum temperature change, minTempChange
 """
+
+# ╔═╡ 7376f003-edfb-46f3-8794-009dccbc3f69
+# Array to store iterations of the model 
+modelDictionary = []
 
 # ╔═╡ 6b6588b2-b1b9-4057-ae51-b38a907a2af2
 md"""
@@ -242,14 +248,19 @@ end
 
 # ╔═╡ 7dbd5761-a4b9-47ba-a9c2-13f0f73e0166
 # Adds each optimization iteration of the model into modelDictionary, given an original temperature, oldTemp and a minimum temperature change, minTempChange
+# Takes in three parameters:  
+# - oldTemp: initial temperature (number)
+# - minTempChange: temperature change (number)
+# - displayLatex: boolean; displays Latex if set to true 
+
 function getData(oldTemp,minTempChange,displayLatex)
-	modelData = optimizeUHIModel(oldTemp, minTempChange)
+	modelData = optimizeUHIModel(oldTemp,minTempChange)
 	UHImodel = modelData[1]
 	X = modelData[2]
 	temperatureChange = modelData[3]
 	quadTemp = [modelData[4],modelData[5], modelData[6], modelData[7]]
 	quadTempChange = [modelData[8],modelData[9], modelData[10], modelData[11]]
-	push!(modelDictionary,[Dict("Old Temp" => oldTemp, "Minimum Temp Change" => minTempChange,"Objective " => objective_value(UHImodel), "X" => value.(X), "Temperature Change" => value.(temperatureChange), "Quad Temp" =>([value.(quadTemp[1]),value.(quadTemp[2]),value.(quadTemp[3]),value.(quadTemp[4])]), "Quad Temp Change" =>([value.(quadTempChange[1]),value.(quadTempChange[2]),value.(quadTempChange[3]),value.(quadTempChange[4])]), "Social Benefit"=>(socialBenefitAnalysis(X)), "Impact HVI" => impactHVI(quadTemp))
+	push!(modelDictionary,[Dict("Old Temp" => oldTemp, "Minimum Temp Change" => minTempChange,"Objective" => objective_value(UHImodel), "X" => value.(X), "Temperature Change" => value.(temperatureChange), "Quad Temp" =>([value.(quadTemp[1]),value.(quadTemp[2]),value.(quadTemp[3]),value.(quadTemp[4])]), "Quad Temp Change" =>([value.(quadTempChange[1]),value.(quadTempChange[2]),value.(quadTempChange[3]),value.(quadTempChange[4])]), "Social Benefit"=>(socialBenefitAnalysis(X)), "Impact HVI" => impactHVI(quadTempChange))
 	])
 	if displayLatex == true
 		showLatex(UHImodel); 
@@ -259,17 +270,27 @@ end
 # ╔═╡ 45b549e1-e32b-43c0-bf2d-5bf6c50aaa99
 getData(30.55,0.5,true)
 
-# ╔═╡ 2016c64f-0748-4a4a-9011-be9179faf144
+# ╔═╡ 04f96896-39ec-48ce-ad9f-ce7d5bcd39b0
 md"""
-#### getData Documentation 
+#### modelDictionary Documentation
 
-Takes in three parameters:  
-- oldTemp: initial temperature (number)
-- minTempChange: temperature change (number)
-- displayLatex: boolean; displays Latex if set to true 
-	
+General Form: modelDictionary[1][1][key]
+- first index represents the index of modelDictionary 
+- second index is always 1 
+- third index is a key (see valid key values below)
 
+To empty the Dictionary, run the resetDictionary function below
 """
+
+# ╔═╡ 302b7089-afba-43e8-8190-b7af6876aeab
+# Accessing modelDictionary iterations
+# modelDictionary[1][1][key]
+# 	where the first index represents the index of modelDictionary 
+#   second index is always 1 
+#   third index is a key (see valid key values above)
+
+# ╔═╡ 3354f9db-cf87-4809-8872-d19bf8118abc
+keys(modelDictionary[1][1])
 
 # ╔═╡ 218332e1-ebdc-4fe5-b09b-494666c5b15a
 function resetDictionary()
@@ -281,32 +302,65 @@ end
 # ╔═╡ 65ad7161-1e58-4605-85fa-decbe3f67b2a
 resetDictionary()
 
-# ╔═╡ 04f96896-39ec-48ce-ad9f-ce7d5bcd39b0
+# ╔═╡ ed5946fc-8680-4b35-8b8a-95337077e0c8
 md"""
-#### Accessing modelDictionary iterations
-
-General Form: modelDictionary[1][1][key]
-- first index represents the index of modelDictionary 
-- second index is always 1 
-- third index is a key (see valid key values below)
-
+#### Stochastic Analysis of Model  
+By utilzing the Law of Large Numbers, N ~= 10,000, we hope to find an ideal cost solution for the average temperature scenario and the extreme temperature scenario. 
 """
 
-# ╔═╡ 3354f9db-cf87-4809-8872-d19bf8118abc
-keys(modelDictionary[1][1])
+# ╔═╡ 9fb9606f-7e91-483f-a8db-3c54c666484a
+# Creates a stochastic dataset for 1000 random temperature values ranging from 30.55 degrees Celsius (average) to 36.67 degrees Celsius (extreme)
+function generateStochastic()
+	for i=1:10000
+		getData(rand(3055:3667)/100,0.5,false)
+	end 
+end 
 
-# ╔═╡ 302b7089-afba-43e8-8190-b7af6876aeab
-# Accessing modelDictionary iterations
-# modelDictionary[1][1][key]
-# 	where the first index represents the index of modelDictionary 
-#   second index is always 1 
-#   third index is a key (see valid key values above)
+# ╔═╡ 1842c0a1-5545-47aa-a386-bf568e80adb3
+# Finds the model Dictionary that matches with the Stochastic Average
+function getMatching()
+	generateStochastic()
+	sum = 0 
+	for i=1:10000
+		sum += modelDictionary[i][1]["Objective"]
+	end 
+	for i=1:1000
+		if abs(round(sum/10000)-modelDictionary[i][1]["Objective"]) <= 1*10^4
+			# return i
+			return modelDictionary[i][1]
+		end 
+	end 
+end 
 
-# ╔═╡ 8c4c9001-ce54-4a1f-9c9a-ed673548f304
-getData(36.67, 0.5,false)
+# ╔═╡ 485fd192-015a-4569-b0d4-36637e363b04
+stochasticMatch = getMatching()
 
-# ╔═╡ 69191c17-142a-4952-987d-d6c9ec26d61f
-modelDictionary
+# ╔═╡ 6684158a-8f5b-4351-9cf8-fd8ef1188653
+# Returns the Stochastic Social Benefits given model data
+function stochasticSocialBenefits()
+	socialBenefits = 0 
+	for i=1:4
+		socialBenefits += stochasticMatch["Social Benefit"][1][i]
+	end 
+	return socialBenefits
+end  
+
+# ╔═╡ 28a361c8-995b-4e2e-adba-1d869c1b387b
+"Stochastic Objective: " * string(stochasticMatch["Objective"])
+
+# ╔═╡ 36e4c970-8588-467a-b699-e0cc7b84bd58
+"Stochastic Social Benefits: " * string(stochasticSocialBenefits())
+
+# ╔═╡ 0d1c52d2-d0e3-4621-8f88-938b57b8ed77
+"Stochastic HVI: " * string(stochasticMatch["Impact HVI"][1])
+
+# ╔═╡ f2e32251-4e47-494a-b955-b08451fcab36
+md"""
+#### Acknowledgements & Sources   
+- [Julia Documentation](https://docs.julialang.org/en/v1/)
+- [Project Supplemental Doc](https://docs.google.com/document/d/1c8rLQg0OSOY7hnIkabI2GMhM1b-2YHsyMdj2sa8YkEU/edit)
+- Special Thanks to Professor Lindsay Anderson, Professor Vivek Srikrishnan, and Teaching Assistant Vivienne Liu for instructing BEE 4750/5750: Environmental Systems Analysis in Fall 2021 and providing guidance and assistance in developing this project
+"""
 
 # ╔═╡ Cell order:
 # ╟─b81709c0-5c1c-11ec-245b-d7b4e0f911eb
@@ -317,21 +371,26 @@ modelDictionary
 # ╠═0ffa59a4-3f9b-4f8f-ac6b-7b757ddad487
 # ╟─c064697b-e3e8-4d6c-91bd-31e3fb44d4b5
 # ╠═c2487fe0-2ef9-4efb-a246-c9585bfb6c4b
-# ╠═4552a8e2-f967-41af-bdae-ba1da6e6cbc9
-# ╠═e6be1381-0c80-4680-9203-1656999273c7
+# ╟─e6be1381-0c80-4680-9203-1656999273c7
 # ╠═5dcb64d1-40e2-4a07-b35d-88cf14246e3b
 # ╠═d99db411-71d3-4f31-84c2-3a247c3d34a3
-# ╠═7376f003-edfb-46f3-8794-009dccbc3f69
 # ╟─49e2884a-c1ca-43cb-9c15-c651a0155125
+# ╠═7376f003-edfb-46f3-8794-009dccbc3f69
 # ╠═7dbd5761-a4b9-47ba-a9c2-13f0f73e0166
 # ╟─6b6588b2-b1b9-4057-ae51-b38a907a2af2
 # ╟─dd797a9c-02fb-4129-9b90-46bbf09fa927
 # ╟─45b549e1-e32b-43c0-bf2d-5bf6c50aaa99
-# ╟─2016c64f-0748-4a4a-9011-be9179faf144
+# ╟─04f96896-39ec-48ce-ad9f-ce7d5bcd39b0
+# ╟─302b7089-afba-43e8-8190-b7af6876aeab
+# ╟─3354f9db-cf87-4809-8872-d19bf8118abc
 # ╠═218332e1-ebdc-4fe5-b09b-494666c5b15a
 # ╠═65ad7161-1e58-4605-85fa-decbe3f67b2a
-# ╟─04f96896-39ec-48ce-ad9f-ce7d5bcd39b0
-# ╟─3354f9db-cf87-4809-8872-d19bf8118abc
-# ╠═302b7089-afba-43e8-8190-b7af6876aeab
-# ╠═8c4c9001-ce54-4a1f-9c9a-ed673548f304
-# ╠═69191c17-142a-4952-987d-d6c9ec26d61f
+# ╟─ed5946fc-8680-4b35-8b8a-95337077e0c8
+# ╠═9fb9606f-7e91-483f-a8db-3c54c666484a
+# ╠═1842c0a1-5545-47aa-a386-bf568e80adb3
+# ╠═485fd192-015a-4569-b0d4-36637e363b04
+# ╠═6684158a-8f5b-4351-9cf8-fd8ef1188653
+# ╟─28a361c8-995b-4e2e-adba-1d869c1b387b
+# ╟─36e4c970-8588-467a-b699-e0cc7b84bd58
+# ╟─0d1c52d2-d0e3-4621-8f88-938b57b8ed77
+# ╟─f2e32251-4e47-494a-b955-b08451fcab36
