@@ -1,5 +1,5 @@
 # 4750-final-project
-This repo contains all commits for the BEE 4750: Environmental Systems Analysis project for Anna Cliche, Cormac Mahoney, and Demola Ogunnaike.  
+This repo contains all commits for the BEE 4750: Environmental Systems Analysis project on Urban Heat Islands for Anna Cliche, Cormac Mahoney, and Demola Ogunnaike. For the most up to date code, please refer to the project-clean.jl file. 
 
 ## Overview of GitHub Commands: 
 Before using any of the commands below, make sure that you're in the project directory. 
