@@ -270,6 +270,25 @@ end
 # ╔═╡ 45b549e1-e32b-43c0-bf2d-5bf6c50aaa99
 getData(30.55,0.5,true)
 
+# ╔═╡ a1fb3972-d9f4-4207-9815-bdf806f78174
+md"""
+#### Average Temperature Solution 
+"""
+
+# ╔═╡ 1d611d3f-e0d7-4b5f-854f-b3dbab06f63f
+modelDictionary[1][1]
+
+# ╔═╡ 4fb79c7f-1eeb-4db5-b68b-bc491df9098a
+md"""
+#### Extreme Temperature Solution 
+"""
+
+# ╔═╡ deb79ea6-7e0d-4655-ad18-4d2ddcbd0320
+getData(36.67,0.5,false)
+
+# ╔═╡ d3dd5315-0877-483d-be18-b87a5ac5aa96
+modelDictionary[2][1]
+
 # ╔═╡ 04f96896-39ec-48ce-ad9f-ce7d5bcd39b0
 md"""
 #### modelDictionary Documentation
@@ -281,13 +300,6 @@ General Form: modelDictionary[1][1][key]
 
 To empty the Dictionary, run the resetDictionary function below
 """
-
-# ╔═╡ 302b7089-afba-43e8-8190-b7af6876aeab
-# Accessing modelDictionary iterations
-# modelDictionary[1][1][key]
-# 	where the first index represents the index of modelDictionary 
-#   second index is always 1 
-#   third index is a key (see valid key values above)
 
 # ╔═╡ 3354f9db-cf87-4809-8872-d19bf8118abc
 keys(modelDictionary[1][1])
@@ -325,8 +337,7 @@ function getMatching()
 		sum += modelDictionary[i][1]["Objective"]
 	end 
 	for i=1:1000
-		if abs(round(sum/10000)-modelDictionary[i][1]["Objective"]) <= 1*10^4
-			# return i
+		if abs(round(sum/10000)-modelDictionary[i][1]["Objective"]) <= 1*10^5
 			return modelDictionary[i][1]
 		end 
 	end 
@@ -337,6 +348,7 @@ stochasticMatch = getMatching()
 
 # ╔═╡ 6684158a-8f5b-4351-9cf8-fd8ef1188653
 # Returns the Stochastic Social Benefits given model data
+# May have to re-run stochasticMatch = getMatching() if there is an error
 function stochasticSocialBenefits()
 	socialBenefits = 0 
 	for i=1:4
@@ -347,6 +359,12 @@ end
 
 # ╔═╡ 28a361c8-995b-4e2e-adba-1d869c1b387b
 "Stochastic Objective: " * string(stochasticMatch["Objective"])
+
+# ╔═╡ 6314c13f-266a-44a6-bdf4-83095d0b3668
+"Stochastic Quadrant Temperatures: " * string(stochasticMatch["Quad Temp"])
+
+# ╔═╡ 9ba11032-d7ea-4dc7-92b9-71594a9bcfdf
+"Stochastic Temperature Change: " * string(stochasticMatch["Temperature Change"][1])
 
 # ╔═╡ 36e4c970-8588-467a-b699-e0cc7b84bd58
 "Stochastic Social Benefits: " * string(stochasticSocialBenefits())
@@ -380,8 +398,12 @@ md"""
 # ╟─6b6588b2-b1b9-4057-ae51-b38a907a2af2
 # ╟─dd797a9c-02fb-4129-9b90-46bbf09fa927
 # ╟─45b549e1-e32b-43c0-bf2d-5bf6c50aaa99
+# ╟─a1fb3972-d9f4-4207-9815-bdf806f78174
+# ╟─1d611d3f-e0d7-4b5f-854f-b3dbab06f63f
+# ╟─4fb79c7f-1eeb-4db5-b68b-bc491df9098a
+# ╟─deb79ea6-7e0d-4655-ad18-4d2ddcbd0320
+# ╟─d3dd5315-0877-483d-be18-b87a5ac5aa96
 # ╟─04f96896-39ec-48ce-ad9f-ce7d5bcd39b0
-# ╟─302b7089-afba-43e8-8190-b7af6876aeab
 # ╟─3354f9db-cf87-4809-8872-d19bf8118abc
 # ╠═218332e1-ebdc-4fe5-b09b-494666c5b15a
 # ╠═65ad7161-1e58-4605-85fa-decbe3f67b2a
@@ -391,6 +413,8 @@ md"""
 # ╠═485fd192-015a-4569-b0d4-36637e363b04
 # ╠═6684158a-8f5b-4351-9cf8-fd8ef1188653
 # ╟─28a361c8-995b-4e2e-adba-1d869c1b387b
+# ╟─6314c13f-266a-44a6-bdf4-83095d0b3668
+# ╟─9ba11032-d7ea-4dc7-92b9-71594a9bcfdf
 # ╟─36e4c970-8588-467a-b699-e0cc7b84bd58
 # ╟─0d1c52d2-d0e3-4621-8f88-938b57b8ed77
 # ╟─f2e32251-4e47-494a-b955-b08451fcab36
